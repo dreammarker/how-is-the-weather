@@ -179,6 +179,18 @@ function setWeatherInfo(cityName, weatherInfo) {
    * 우리가 받아온 온도는 Kelvin 형식으로 표시되어있습니다.
    * 어떻게 Celsius 형식으로 변경할 수 있을까요?
    */
+  let weatherLink;
+    if (weatherInfo.weather === "Fog" || weatherInfo.weather === "Mist" 
+      || weatherInfo.weather === "Smoke" || weatherInfo.weather === "Haze") {
+      weatherLink = "Fog.gif";
+    } else {
+      weatherLink = weatherInfo.weather+".gif";
+    }
+    image.src = `./img/${weatherLink}`; // 이곳에 이미지 파일의 경로를 입력해주면 이미지 파일이 표시됩니다.
+  
+
+
+
   console.log(weatherInfo);
   temp.innerText = (weatherInfo.temp-273).toFixed(1); // 이곳에 넣어준 값이 온도로 표시됩니다!
 
@@ -188,8 +200,16 @@ function setWeatherInfo(cityName, weatherInfo) {
   /**
    * data.js 파일에 있는 imgLinks 객체를 사용해 날씨에 맞는 이미지를 표시해보세요!
    */
-  const weatherLink = weatherInfo.weather+".png";
-  image.src = `./img/${weatherLink}`; // 이곳에 이미지 파일의 경로를 입력해주면 이미지 파일이 표시됩니다.
+
+  let tempFah = document.body.querySelector('#fah');
+  tempFah.addEventListener('click', function(){
+    temp.innerText = ((weatherInfo.temp-273) * 1.8 + 32).toFixed(1);
+  });
+  
+  let tempCel = document.body.querySelector('#cel');
+  tempCel.addEventListener('click', function(){
+    temp.innerText = (weatherInfo.temp-273).toFixed(1);
+  });
 
   /**
    * 아래의 코드는 어떤 역할을 할까요?

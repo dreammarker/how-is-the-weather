@@ -11,8 +11,9 @@
  * https://openweathermap.org/weather-conditions
  */
 const imgLinks = {
-  Clear: "sun.png",
-  Rain: "rain.png",
-  Snow: "snowing.png",
-  Cluds: "cloudy.png"
+  Clear: "Clear.gif",
+  Rain: "rain.gif",
+  Snow: "snowing.gif",
+  Clouds: "cloud.gif",
+  Fog: "Fog.gif"
 };

@@ -1,3 +1,4 @@
+
 /**
  * id를 이용해 id에 해당되는 html element를 가지고옵니다.
  */
@@ -28,7 +29,31 @@ searchForm.addEventListener("submit", function(event) {
       input.disabled = false;
     });
 });
-getGeoCode("서울");
+  //버튼 클릭시..
+  let button = document.querySelector(".fa-search");
+  button.onclick = function(){
+    let searchTEXT =document.querySelector('#searchText');
+    let text = "";
+    if(searchTEXT.textContent.trim().length===0){
+       let first = document.querySelector('#city');
+       text = first.textContent;
+    } 
+    else{
+      text = searchTEXT.textContent;
+    }
+    getGeoCode(text)
+    .then(function(code) {
+      return getWeatherData(code.lat, code.lng);
+    })
+    .then(function(weatherInfo) {
+      setWeatherInfo(text, weatherInfo);
+    })
+    .catch(function(err) {
+      console.log("에러가 발생했습니다.", err);
+      input.disabled = false;
+    });
+  }
+  button.onclick();
 // 1. 입력된 도시의 위도, 경도 값을 가지고 옵니다.
 function getGeoCode(city) {
   return new Promise(function(resolve, reject) {
@@ -51,6 +76,7 @@ function getGeoCode(city) {
     });
   });
 }
+//지역에 있는 값들 위도경도 -> 날씨 가져오기
 function WeatherPrint(location){
    return new Promise(function(resolve,rejcect){
     getGeoCode(location).then(function(value){
@@ -60,10 +86,48 @@ function WeatherPrint(location){
     });
  });
 }
-let result = WeatherPrint("서울").then(function(val){
-  return val;
-});
-console.log(result);
+//미세먼지 지역에 따른 값 가져오기
+function finedustGet(location){
+  finedust(location).then(function(Value){
+      let select = document.querySelector("#city_name");
+      select.innerHTML = ""; //초기화...
+      if(Value.length===0){
+        select.style.display = "none"
+        let pm10 = document.querySelector("#pm10");
+        let pm25 = document.querySelector("#pm25");
+        pm10.textContent ="";
+        pm25.textContent ="";
+      }
+      else{
+        select.style.display = "block"
+      }
+      for(let i=0;i<Value.length;i++){
+        let value = document.createElement("option");
+        value.text = Value[i].stationName;
+        select.options.add(value,i);
+        select.onchange = function(result){
+          let index = event.target.selectedIndex;
+          let pm10 = document.querySelector("#pm10");
+          let pm25 = document.querySelector("#pm25");
+          pm10.textContent = "미세먼지 "+Value[index].pm10+" "+Value[index].state.pm10state;
+          pm25.textContent = "초미세먼지 "+ Value[index].pm25+" "+Value[index].state.pm25state;
+        }
+      }
+      let pm10 = document.querySelector("#pm10");
+      let pm25 = document.querySelector("#pm25");
+      pm10.textContent = "미세먼지 "+Value[0].pm10+" "+Value[0].state.pm10state;
+      pm25.textContent = "초미세먼지 "+ Value[0].pm25+" "+Value[0].state.pm25state;
+    
+      console.log(select);
+
+  });
+}
+
+
+// let result = WeatherPrint("서울").then(function(val){
+//   return val;
+// });
+
 // 2. 위도, 경도를 바탕으로 해당 지역의 날씨를 가지고 옵니다.
 /**
  * getGeoCode 함수에서 return한 객체에서 lat, lng 값을 가지고 옵니다.
@@ -118,6 +182,9 @@ function setWeatherInfo(cityName, weatherInfo) {
   console.log(weatherInfo);
   temp.innerText = (weatherInfo.temp-273).toFixed(1); // 이곳에 넣어준 값이 온도로 표시됩니다!
 
+
+
+  
   /**
    * data.js 파일에 있는 imgLinks 객체를 사용해 날씨에 맞는 이미지를 표시해보세요!
    */
@@ -129,10 +196,9 @@ function setWeatherInfo(cityName, weatherInfo) {
    */
   //도시이름 넣기..
   city.innerText = cityName;
-
+  finedustGet(cityName);
   input.disabled = false;
 }
-
 /**
  * 해볼 것들
  *
@@ -147,21 +213,65 @@ function setWeatherInfo(cityName, weatherInfo) {
  * 원하는 이미지를 찾아 img 폴더에 저장 후 data.js 파일을 수정해보세요.
  *
  */
-//미세먼지
+//미세먼지 도시이름을 입력했을 경우만가져오기..
 function finedust(city) {
   return new Promise(function(resolve, reject) {
     fetch(
-      //`https://openapi.airkorea.or.kr/openapi/services/rest/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty?serviceKey=${AIRKOREA_KEY}&numOfRows=1&pageNo=1&sidoName=${city}&ver=1.3`
-      "https://openapi.airkorea.or.kr/openapi/services/rest/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty?serviceKey=CrwzQV%2FObWLeHhsvGFOw6AMlZWK5XXkLnPmOSGhUXrdylBBghRysHKqvsYfv6GDlOjC1lrT8fbLNbdqXHZGsug%3D%3D&numOfRows=10&pageNo=1&sidoName=%EC%9D%B8%EC%B2%9C&ver=1.3"
-      ).then(function(response) {
-      response.text().then(function(data){
-        debugger;
-        console.log(data);
+      `http://openapi.airkorea.or.kr/openapi/services/rest/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty?sidoName=${city}&pageNo=1&numOfRows=40&ServiceKey=CrwzQV%2FObWLeHhsvGFOw6AMlZWK5XXkLnPmOSGhUXrdylBBghRysHKqvsYfv6GDlOjC1lrT8fbLNbdqXHZGsug%3D%3D&_returnType=json&ver=1.7`
+    ).then(function(response) {
+      response.json().then(function(data){
+        data = data.list;
+        let array = [];
+        for(let i=0;i<data.length;i++){
+           if(data[i].pm10Value!==""&&data[i].pm25Value!==""&&!isNaN(Number(data[i].pm10Value))){
+             let object ={};
+             object["pm10"]=(data[i].pm10Value); //미세먼지
+             object["pm25"]=(data[i].pm25Value); //초미세먼지
+             object["stationName"]=(data[i].stationName); //지역이름
+             object["state"]= finddustline(data[i].pm10Value,data[i].pm25Value);
+             array.push(object);
+           }
+        }
+        resolve(array);
       });
     });
   });
 }
-finedust("서울");
+//미세먼지 농도기준에 따른 기준
+function finddustline(pm10,pm25){
+  let object = {};
+  let pm10state = "";
+  let pm25state = "";
+  if(pm10>=151){
+    pm10state = "매우나쁨";
+  }
+  else if(pm10>=81){
+    pm10state = "나쁨";
+  }
+  else if(pm10>=31){
+    pm10state = "보통";
+  }
+  else{
+    pm10state = "좋음";
+  }
+
+  if(pm25>=151){
+    pm25state = "매우나쁨";
+  }
+  else if(pm25>=81){
+    pm25state = "나쁨";
+  }
+  else if(pm25>=31){
+    pm25state = "보통";
+  }
+  else{
+    pm25state = "좋음";
+  }
+  object["pm10state"] = pm10state;
+  object["pm25state"] = pm25state;
+  return object;
+}
+
 // Changes XML to JSON
 function xmlToJson(xml) {
 	

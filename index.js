@@ -36,22 +36,24 @@ searchForm.addEventListener("submit", function(event) {
     let text = "";
     if(searchTEXT.textContent.trim().length===0){
        let first = document.querySelector('#city');
+       let select = document.querySelector("#city_name");
+       select.style.display = "none"
        text = first.textContent;
     } 
     else{
       text = searchTEXT.textContent;
+      getGeoCode(text)
+      .then(function(code) {
+        return getWeatherData(code.lat, code.lng);
+      })
+      .then(function(weatherInfo) {
+        setWeatherInfo(text, weatherInfo);
+      })
+      .catch(function(err) {
+        console.log("에러가 발생했습니다.", err);
+        input.disabled = false;
+      });
     }
-    getGeoCode(text)
-    .then(function(code) {
-      return getWeatherData(code.lat, code.lng);
-    })
-    .then(function(weatherInfo) {
-      setWeatherInfo(text, weatherInfo);
-    })
-    .catch(function(err) {
-      console.log("에러가 발생했습니다.", err);
-      input.disabled = false;
-    });
   }
   button.onclick();
 // 1. 입력된 도시의 위도, 경도 값을 가지고 옵니다.

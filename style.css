@@ -33,6 +33,7 @@ body {
 #city {
   font-size: 100px;
   color: white;
+  margin: 0px;
 }
 
 #temp {

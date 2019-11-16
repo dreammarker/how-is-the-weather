@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
@@ -11,9 +12,18 @@
   <body>
     <div class="container">
       <div>
-        <img src="./img/sun.png" id="image"></img>
-        <p id="city">왕십리</p>
-        <p><span id='temp'>25</span><span>℃</span></p>
+        <img src="./img/question.gif" id="image"></img>
+        <p id="city">도시이름</p>
+        <p>
+      
+          <span id='temp'>25</span>
+          <span id='cel'class='measure'>℃</span>
+          <span>/</span>
+          <span id='fah' class='measure'>°F</span>
+        
+        </p>
+
+
       </div>
       <div>
         <form id='searchForm'>
@@ -25,5 +35,6 @@
     <script src='./data.js'></script>
     <script src="./config.js"></script>
     <script src="./index.js"></script>
+ 
   </body>
 </html>

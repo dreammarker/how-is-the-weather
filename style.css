@@ -1,11 +1,17 @@
+
 body {
   height: 100vh;
   font-family: "Jua", sans-serif;
   color: white;
   font-size: 25px;
   text-align: center;
-  background: linear-gradient(to right, #64b3f4, #c2e59c);
+  background: linear-gradient(to right, blue
+  , #c2e59c);
 }
+
+ /*
+   그라데이션  background: linear-gradient(to right, #64b3f4, #c2e59c);
+  */
 
 .container {
   position: absolute;
@@ -17,16 +23,21 @@ body {
 }
 
 #image {
-  width: 250px;
-  height: 250px;
+  width: 350px;
+  height: 350px;
 }
+/*
+아이콘 이미지
+*/
 
 #city {
-  font-size: 30px;
+  font-size: 100px;
+  color: white;
 }
 
 #temp {
-  font-size: 80px;
+  font-size: 100px;
+  color: white;
 }
 
 form {
@@ -82,4 +93,43 @@ form:hover input {
 
 form:hover .fa {
   background: linear-gradient(to right, #ffc371, #ff5f6d);
+}
+
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  vertical-align:middle;
+}
+ 
+
+ 
+p {
+  margin:0px;
+  display:inline-block;
+  font-size:15px;
+  font-weight:bold;
+}
+
+
+#slash {
+  font-size: 100px;
+}
+
+
+.measure {
+  padding: 6px;
+  border-radius: 100%;
+  color: white;
+  transition: all 0.3s;
+  
+
+}
+
+.measure:hover {
+  cursor: pointer;
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.392);
 }
